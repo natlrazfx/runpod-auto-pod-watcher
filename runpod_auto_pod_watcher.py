@@ -500,7 +500,9 @@ def is_gpu_available(result: Dict[str, Any]) -> bool:
         return False
     stock_status = lowest_price.get("stockStatus", "None")
     counts = lowest_price.get("availableGpuCounts") or []
-    return stock_status != "None" and 1 in counts
+    if 1 in counts:
+        return True
+    return stock_status not in {"None", "Unavailable", "OutOfStock", "NoStock"}
 
 
 def write_state(payload: Dict[str, Any]) -> None:

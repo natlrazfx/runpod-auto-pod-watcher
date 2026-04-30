@@ -89,6 +89,7 @@ D:\Scripts\runpod_auto_pod_watcher\run_watcher.bat telegram-test
 ## Notes
 
 - The script uses the official Runpod GraphQL API to check GPU availability and the REST API to create Pods.
+- Some Runpod availability responses report `stockStatus` without `availableGpuCounts`; in that case the watcher treats a non-empty stock status as worth trying.
 - For `RTX PRO 6000 Any`, the watcher checks `Server Edition` first and then `Workstation Edition`.
 - The tool attaches your selected `networkVolumeId` and uses your selected `templateId`.
 - Container disk remains temporary and is erased when the Pod is reset or terminated.
