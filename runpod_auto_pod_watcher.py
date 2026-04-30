@@ -80,6 +80,7 @@ DEFAULT_CONFIG = {
     "template_name": "",
     "network_volume_id": "",
     "network_volume_name": "",
+    "global_networking": True,
     "telegram_bot_token": "",
     "telegram_chat_id": "",
 }
@@ -478,6 +479,7 @@ def build_pod_payload(config: Dict[str, Any], gpu_option: Dict[str, Any], contai
         "cloudType": config["cloud_type"],
         "computeType": "GPU",
         "containerDiskInGb": container_disk_gb,
+        "globalNetworking": bool(config.get("global_networking", True)),
         "gpuCount": 1,
         "gpuTypeIds": gpu_option["gpu_type_ids"],
         "gpuTypePriority": "custom",
@@ -680,7 +682,7 @@ def run_watcher() -> int:
             time.sleep(interval)
             continue
 
-        available_result: Optional[Dict[str, Any]] = None
+        available_results: List[Dict[str, Any]] = []
 
         for gpu_type_id in gpu_option["gpu_type_ids"]:
             try:
@@ -700,15 +702,14 @@ def run_watcher() -> int:
                 f"stock={stock_status} | counts={available_counts} | price={price}"
             )
             if is_gpu_available(result):
-                available_result = result
-                break
+                available_results.append(result)
 
         if use_direct_create_fallback:
             continue
 
-        if available_result:
+        for available_result in available_results:
             selected_gpu_type = available_result.get("id") or available_result.get("displayName")
-            log(f"GPU is available. Creating Pod with {selected_gpu_type}.")
+            log(f"GPU is available. Trying to create Pod with {selected_gpu_type}.")
             if create_and_record_pod(client, config, gpu_option, container_disk_gb, selected_gpu_type):
                 return 0
 

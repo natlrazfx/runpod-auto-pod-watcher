@@ -9,6 +9,7 @@
   "template_name": "your_template_name",
   "network_volume_id": "your_network_volume_id",
   "network_volume_name": "your_network_volume_name",
+  "global_networking": true,
   "telegram_bot_token": "",
   "telegram_chat_id": ""
 }
