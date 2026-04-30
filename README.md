@@ -93,3 +93,13 @@ D:\Scripts\runpod_auto_pod_watcher\run_watcher.bat telegram-test
 - The tool attaches your selected `networkVolumeId` and uses your selected `templateId`.
 - Container disk remains temporary and is erased when the Pod is reset or terminated.
 - If you attach a network volume, building a fresh Pod when hardware appears is usually the cleaner workflow than waiting on one old Pod.
+
+## Don@tes
+
+**If any of this turns out to be useful for you - I'm glad.  
+And if you feel like supporting it:  
+1-2 coffees are more than enough.**
+
+[Click to Buy me a Coffee](https://buymeacoffee.com/natlrazfx)
+
+[Subscribe me on Substack](https://substack.com/@natalia289425)
