@@ -478,7 +478,6 @@ def build_pod_payload(config: Dict[str, Any], gpu_option: Dict[str, Any], contai
         "cloudType": config["cloud_type"],
         "computeType": "GPU",
         "containerDiskInGb": container_disk_gb,
-        "desiredStatus": "RUNNING",
         "gpuCount": 1,
         "gpuTypeIds": gpu_option["gpu_type_ids"],
         "gpuTypePriority": "custom",
