@@ -1,0 +1,14 @@
+{
+  "api_key": "paste_your_runpod_api_key_here",
+  "cloud_type": "COMMUNITY",
+  "poll_interval_seconds": 120,
+  "volume_mount_path": "/workspace",
+  "pod_name_prefix": "comfyui-auto",
+  "data_center_ids": [],
+  "template_id": "your_template_id",
+  "template_name": "your_template_name",
+  "network_volume_id": "your_network_volume_id",
+  "network_volume_name": "your_network_volume_name",
+  "telegram_bot_token": "",
+  "telegram_chat_id": ""
+}
