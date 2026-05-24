@@ -83,7 +83,7 @@ DEFAULT_CONFIG = {
     "network_volume_name": "",
     "global_networking": True,
     "pod_proxy_port": "8188",
-    "pod_console_url_template": "https://www.runpod.io/console/pods/{pod_id}",
+    "pod_console_url_template": "https://console.runpod.io/pods?id={pod_id}",
     "open_pod_url_in_browser": False,
     "telegram_bot_token": "",
     "telegram_chat_id": "",

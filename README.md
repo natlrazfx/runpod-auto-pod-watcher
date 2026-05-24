@@ -93,7 +93,7 @@ D:\Scripts\runpod_auto_pod_watcher\run_watcher.bat telegram-test
 By default, the Telegram message includes:
 
 - `Pod URL`: `https://<pod-id>-8188.proxy.runpod.net`
-- `Runpod console`: `https://www.runpod.io/console/pods/<pod-id>`
+- `Runpod console`: `https://console.runpod.io/pods?id=<pod-id>`
 
 Change `pod_proxy_port` in `config.json` if your template exposes a different port.
 
