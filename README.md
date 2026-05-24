@@ -17,6 +17,8 @@ This tool waits until your requested Runpod GPU becomes available, then creates 
 - Polls Runpod until the GPU is available
 - Creates a new Pod with the chosen settings
 - Sends a Telegram notification after successful Pod creation if Telegram is configured
+- Includes the Pod proxy URL and Runpod console URL in Telegram notifications
+- Can optionally open the Pod proxy URL in your browser after creation
 
 ## Files
 
@@ -84,6 +86,21 @@ D:\Scripts\runpod_auto_pod_watcher\run_watcher.bat telegram-config
 
 ```bat
 D:\Scripts\runpod_auto_pod_watcher\run_watcher.bat telegram-test
+```
+
+## Pod links
+
+By default, the Telegram message includes:
+
+- `Pod URL`: `https://<pod-id>-8188.proxy.runpod.net`
+- `Runpod console`: `https://www.runpod.io/console/pods/<pod-id>`
+
+Change `pod_proxy_port` in `config.json` if your template exposes a different port.
+
+Set this in `config.json` to open the Pod URL in your browser after creation:
+
+```json
+"open_pod_url_in_browser": true
 ```
 
 ## Notes

@@ -3,6 +3,7 @@ import json
 import getpass
 import sys
 import time
+import webbrowser
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -81,6 +82,9 @@ DEFAULT_CONFIG = {
     "network_volume_id": "",
     "network_volume_name": "",
     "global_networking": True,
+    "pod_proxy_port": "8188",
+    "pod_console_url_template": "https://www.runpod.io/console/pods/{pod_id}",
+    "open_pod_url_in_browser": False,
     "telegram_bot_token": "",
     "telegram_chat_id": "",
 }
@@ -510,6 +514,39 @@ def write_state(payload: Dict[str, Any]) -> None:
     save_json(STATE_PATH, payload)
 
 
+def format_url_template(template: str, pod_id: str, pod_name: str, proxy_port: str) -> str:
+    return template.format(pod_id=pod_id, pod_name=pod_name, proxy_port=proxy_port)
+
+
+def build_pod_urls(config: Dict[str, Any], pod_id: str, pod_name: str) -> Dict[str, str]:
+    if not pod_id:
+        return {}
+
+    proxy_port = str(config.get("pod_proxy_port") or "").strip()
+    urls: Dict[str, str] = {}
+    if proxy_port:
+        urls["proxy"] = f"https://{pod_id}-{proxy_port}.proxy.runpod.net"
+
+    console_template = str(config.get("pod_console_url_template") or "").strip()
+    if console_template:
+        urls["console"] = format_url_template(console_template, pod_id, pod_name, proxy_port)
+
+    return urls
+
+
+def open_pod_url_if_enabled(config: Dict[str, Any], urls: Dict[str, str]) -> None:
+    if not bool(config.get("open_pod_url_in_browser", False)):
+        return
+    url = urls.get("proxy") or urls.get("console")
+    if not url:
+        return
+    try:
+        webbrowser.open(url, new=2, autoraise=True)
+        log(f"Opened Pod URL in browser: {url}")
+    except Exception as exc:  # noqa: BLE001
+        log(f"Failed to open Pod URL in browser: {exc}")
+
+
 def should_retry_create_error(exc: RunpodHttpError) -> bool:
     if exc.api_name != "REST":
         return False
@@ -542,6 +579,7 @@ def create_and_record_pod(
 
     pod_id = pod.get("id", "")
     pod_name = pod.get("name", "(unnamed)")
+    pod_urls = build_pod_urls(config, pod_id, pod_name)
     log(f"Pod created: {pod_name} | id={pod_id}")
     write_state(
         {
@@ -551,21 +589,27 @@ def create_and_record_pod(
             "selected_gpu_type_id": selected_gpu_type_id or ",".join(gpu_option["gpu_type_ids"]),
             "pod_id": pod_id,
             "pod_name": pod_name,
+            "pod_proxy_url": pod_urls.get("proxy", ""),
+            "pod_console_url": pod_urls.get("console", ""),
         }
     )
-    telegram_text = "\n".join(
-        [
-            "Runpod Pod started",
-            f"Name: {pod_name}",
-            f"ID: {pod_id or '-'}",
-            f"GPU: {selected_gpu_type_id or gpu_option['label']}",
-            f"Template: {config.get('template_name', '-')}",
-            f"Volume: {config.get('network_volume_name', '-')}",
-            f"Container disk: {container_disk_gb} GB",
-        ]
-    )
+    telegram_lines = [
+        "Runpod Pod started",
+        f"Name: {pod_name}",
+        f"ID: {pod_id or '-'}",
+        f"GPU: {selected_gpu_type_id or gpu_option['label']}",
+        f"Template: {config.get('template_name', '-')}",
+        f"Volume: {config.get('network_volume_name', '-')}",
+        f"Container disk: {container_disk_gb} GB",
+    ]
+    if pod_urls.get("proxy"):
+        telegram_lines.append(f"Pod URL: {pod_urls['proxy']}")
+    if pod_urls.get("console"):
+        telegram_lines.append(f"Runpod console: {pod_urls['console']}")
+    telegram_text = "\n".join(telegram_lines)
     if send_telegram_message(config, telegram_text):
         log("Telegram notification sent.")
+    open_pod_url_if_enabled(config, pod_urls)
     return True
 
 

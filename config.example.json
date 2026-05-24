@@ -10,6 +10,9 @@
   "network_volume_id": "your_network_volume_id",
   "network_volume_name": "your_network_volume_name",
   "global_networking": true,
+  "pod_proxy_port": "8188",
+  "pod_console_url_template": "https://www.runpod.io/console/pods/{pod_id}",
+  "open_pod_url_in_browser": false,
   "telegram_bot_token": "",
   "telegram_chat_id": ""
 }
